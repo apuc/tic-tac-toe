@@ -4,7 +4,7 @@
 function Ttt() {
 
     this.activeType = 1;
-
+    //Инициализация доски
     this.initBoard = function (id, options) {
 
         this.defaultParams = {
