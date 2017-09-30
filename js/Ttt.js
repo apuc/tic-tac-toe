@@ -6,6 +6,8 @@ function Ttt() {
     this.activeType = 1;
     this.gameStop = 0;
     this.vc = [];
+    this.step = 0;
+    this.ai = false;
 
     this.initBoard = function (id, options) {
 
@@ -15,7 +17,11 @@ function Ttt() {
             backgroundColor: 'Black',
             backgroundColorCell: 'White',
             backgroundColorCellVictory: 'GREEN',
-            customVictoryScenario: function (victoryType, titleBoard) {}
+            ai: false,
+            customVictoryScenario: function (victoryType, titleBoard) {
+            },
+            customTieScenario: function (titleBoard) {
+            }
         };
 
         this.finalParams = this.defaultParams;
@@ -29,6 +35,7 @@ function Ttt() {
         }
         this.options = this.finalParams;
 
+        this.ai = this.options.ai;
         this.board = document.getElementById(id);
         this.createMainTags();
         this.boardBody.style.width = this.options.width;
@@ -64,21 +71,34 @@ function Ttt() {
     }
 
     this.clickToCell = function (event) {
+        if (event.target.getAttribute('data-type') == 0) {
+            this.turn(event.target.getAttribute('data-position'), this.activeType);
+            if (this.ai) {
+                var move = this.ai.MakeAMove(this.getCells(), this.activeType);
+                this.turn(move.position, move.type);
+            }
+        }
+    };
+
+    this.turn = function (position, type) {
         if (this.gameStop === 0) {
-            if (event.target.getAttribute('data-type') == 0) {
-                event.target.innerHTML = this.activeType === 1 ? 'x' : 'o';
-                event.target.setAttribute('data-type', this.activeType);
-                this.vc = this.hasVictory(this.activeType);
-                if (this.vc) {
-                    this.victoryScenario();
+            var cell = this.getElementByAttr('data-position', position);
+            this.step++;
+            cell.innerHTML = type === 1 ? 'x' : 'o';
+            cell.setAttribute('data-type', type);
+            this.vc = this.hasVictory(this.activeType);
+            if (this.vc) {
+                this.victoryScenario();
+            }
+            else {
+                if (this.step === 9) {
+                    this.tieScenario();
                 }
                 else {
                     this.activeType = this.activeType === 1 ? 2 : 1;
                 }
-
             }
         }
-
     };
 
     this.getElementByAttr = function (attr, value) {
@@ -90,6 +110,14 @@ function Ttt() {
         }
     };
 
+    this.getCells = function () {
+        var arr = [];
+        for (var i = 1; i <= 9; i++) {
+            arr[i] = this.getElementByAttr('data-position', i).getAttribute('data-type');
+        }
+        return arr;
+    };
+
     this.setCellColor = function (position, color) {
         var cell = this.getElementByAttr('data-position', position);
         cell.style.backgroundColor = color;
@@ -97,6 +125,7 @@ function Ttt() {
 
     this.victoryScenario = function () {
         this.gameStop = 1;
+        this.step = 0;
         for (var i = 0; i < this.vc.length; i++) {
             this.setCellColor(this.vc[i], this.options.backgroundColorCellVictory);
         }
@@ -106,6 +135,17 @@ function Ttt() {
         this.boardTitle.appendChild(newGameBtn);
         newGameBtn.onclick = this.newGameScenario.bind(this);
         this.options.customVictoryScenario(this.activeType, this.boardTitle);
+    };
+
+    this.tieScenario = function () {
+        this.gameStop = 1;
+        this.step = 0;
+        var newGameBtn = document.createElement('a');
+        newGameBtn.classList.add('newGameBtn');
+        newGameBtn.innerHTML = 'Новая игра';
+        this.boardTitle.appendChild(newGameBtn);
+        newGameBtn.onclick = this.newGameScenario.bind(this);
+        this.options.customTieScenario(this.boardTitle);
     };
 
     this.newGameScenario = function () {

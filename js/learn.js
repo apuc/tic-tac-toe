@@ -13,7 +13,14 @@ document.addEventListener('DOMContentLoaded', function(){
             msg.innerHTML = 'Победили: ' + (type === 1 ? 'Крестики' : 'Нолики');
             title.appendChild(msg);
             console.log(title);
-        }
+        },
+        customTieScenario: function (title) {
+            var msg = document.createElement('div');
+            msg.innerHTML = 'Победила дружба';
+            title.appendChild(msg);
+            console.log(title);
+        },
+        ai: new TttPlayer()
     });
 });
 
