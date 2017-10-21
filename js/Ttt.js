@@ -74,7 +74,7 @@ function Ttt() {
         if (event.target.getAttribute('data-type') == 0) {
             this.turn(event.target.getAttribute('data-position'), this.activeType);
             if (this.ai) {
-                var move = this.ai.MakeAMove(this.getCells(), this.activeType);
+                var move = this.ai.MakeAMove(this.getCells(), this.activeType, this.victoriousCombinations);
                 this.turn(move.position, move.type);
             }
         }

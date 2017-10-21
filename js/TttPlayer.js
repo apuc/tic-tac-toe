@@ -1,8 +1,7 @@
 function TttPlayer() {
 
-    this.MakeAMove = function (cells, activeType) {
+    this.MakeAMove = function (cells, activeType, victoriousCombinations) {
         return this.move(cells, activeType, victoriousCombinations);
-        //return this.randomMove(cells, activeType);
     };
 
     this.randomMove = function (cells, activeType) {
@@ -20,7 +19,7 @@ function TttPlayer() {
         var tttPlayerCells = this.scanCells(cells, 2);
         var playerCells = this.scanCells(cells, 1);
         var tttMove = this.scanForWinTttPlayer(cells, playerCells, victoriousCombinations);
-        var playerMove = this.scanForWinTttPlayer(cells, tttPlayerCells, victoriousCombinations2);
+        var playerMove = this.scanForWinTttPlayer(cells, tttPlayerCells, victoriousCombinations);
 
         if(playerMove !== false && cells[playerMove] == 0){
             return {position: playerMove, type: activeType};
@@ -56,14 +55,18 @@ function TttPlayer() {
     };
 
     this.scanForMove = function(victoriousCombination, playerCells){
-        for (var i = 0; i < playerCells.length; i++){
-            var index = victoriousCombination.indexOf(playerCells[i]);
-            if(index !== -1){
-                victoriousCombination.splice(index, 1);
-            }
-        }
+        var turns = [];
+        var move = [];
 
-        return victoriousCombination;
+        victoriousCombination.map(function (elem) {
+            if (playerCells.indexOf(elem) >= 0){
+                turns.push(elem);
+            }else{
+                move.push(elem);
+            }
+        });
+
+        return move;
     }
 
 }
