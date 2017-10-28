@@ -55,13 +55,10 @@ function TttPlayer() {
     };
 
     this.scanForMove = function(victoriousCombination, playerCells){
-        var turns = [];
         var move = [];
 
         victoriousCombination.map(function (elem) {
-            if (playerCells.indexOf(elem) >= 0){
-                turns.push(elem);
-            }else{
+            if (playerCells.indexOf(elem) === -1){
                 move.push(elem);
             }
         });
